@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresentação · 3 Problemas de Séries Temporais em Saúde</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+            line-height: 1.5;
+        }
+
+        /* Navegação */
+        .nav-bar {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            display: flex;
+            gap: 0.8rem;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px);
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+        }
+        .nav-btn {
+            background: #334155;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-btn:hover {
+            background: #3b82f6;
+            transform: scale(1.05);
+        }
+        .page-indicator {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Slides */
+        .slide {
+            min-height: 100vh;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+        }
+        .slide.active {
+            display: flex;
+        }
+        .slide-content {
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        /* Tipografia */
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0b2b4f, #1e4f7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #0b2b4f;
+            border-left: 6px solid #0b2b4f;
+            padding-left: 1rem;
+            margin: 1.5rem 0 1rem;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: #1e4468;
+            margin: 1rem 0 0.5rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #e2e8f0;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #334155;
+            margin-right: 0.5rem;
+        }
+        .problem-card {
+            background: #f8fafc;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #3b82f6;
+        }
+        .variables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .var-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+        .var-box strong {
+            color: #0b2b4f;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        .reference {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            border-left: 4px solid #64748b;
+        }
+        .reference a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .reference a:hover {
+            text-decoration: underline;
+        }
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .timeline-item {
+            flex: 1;
+            text-align: center;
+            padding: 0.8rem;
+            background: #eef2ff;
+            border-radius: 1rem;
+        }
+        footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .slide-content { padding: 1.5rem; }
+            .variables-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav-bar">
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">◀</button>
+    <span class="page-indicator" id="pageIndicator">1 / 6</span>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">▶</button>
+</div>
+
+<div class="slide active" id="slide1">
+    <div class="slide-content">
+        <span class="badge">Apresentação · 10 min</span>
+        <h1>📊 3 Problemas de Séries Temporais<br>na Gestão Hospitalar</h1>
+        <p style="font-size: 1.2rem; color: #334155; margin: 1rem 0 2rem;">
+            Previsão de Admissões · Ocupação de Leitos · Demanda Ambulatorial
+        </p>
+        <div style="background: #eef2ff; padding: 1.5rem; border-radius: 1.5rem; margin: 1.5rem 0;">
+            <p><strong>🎯 Contexto:</strong> Hospitais enfrentam desafios diários de alocação de recursos. A análise de séries temporais permite antecipar demandas, otimizar escalas e reduzir tempos de espera.</p>
+            <p style="margin-top: 0.8rem;"><strong>📚 Base de referência:</strong> Dados do SUS (SIH/SIH) e literatura internacional sobre previsão em saúde.</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">📈 <strong>Problema 1</strong><br>Admissões Não-Eletivas</div>
+            <div class="timeline-item">🛏️ <strong>Problema 2</strong><br>Ocupação de Leitos</div>
+            <div class="timeline-item">🏥 <strong>Problema 3</strong><br>Demanda Ambulatorial</div>
+        </div>
+        <footer>Clique nas setas para navegar ▶ | Baseado em artigos científicos (2020-2025)</footer>
+    </div>
+</div>
+
+<div class="slide" id="slide2">
+    <div class="slide-content">
+        <span class="badge">Problema 1 · Admissões Não-Eletivas</span>
+        <h1>📅 Previsão de Admissões Hospitalares</h1>
+        <p><strong>Objetivo:</strong> Antecipar o número diário de internações não-planejadas (emergência) para dimensionar equipes e leitos.</p>
+        
+        <div class="problem-card">
+            <h3>🎯 Variável Alvo</h3>
+            <p><strong>Admissões diárias não-eletivas</strong> (número de pacientes internados via pronto-socorro)</p>
+        </div>
+
+        <h3>📊 Variáveis da Base de Dados</h3>
+        <div class="variables-grid">
+            <div class="var-box"><strong>🔢 Endógenas (Temporais)</strong>Admissões passadas (lag), dia da semana, mês, ano, feriados</div>
+            <div class="var-box"><strong>🌡️ Exógenas (Climáticas)</strong>Temperatura média, precipitação, umidade relativa [citation:1]</div>
+            <div class="var-box"><strong>📅 Exógenas (Calendário)</strong>Feriados, fins de semana, períodos de férias, datas comemorativas</div>
+            <div class="var-box"><strong>🦠 Exógenas (Epidemiológicas)</strong>Incidência de gripe, COVID-19, surtos sazonais [citation:4]</div>
+        </div>
+
+        <div class="reference">
+            <strong>📖 Referência detalhada:</strong><br>
+            Eyles, E., et al. (2022). <strong>"Can we accurately forecast non-elective bed occupancy and admissions in the NHS? A time-series MSARIMA analysis"</strong> <em>BMJ Open</em>, 12(4):e056523.<br>
+            🔗 <a href="https://pubmed.ncbi.nlm.nih.gov/35443953/" target="_blank">PMID: 35443953</a> | <strong>Modelos:</strong> SARIMA com variáveis exógenas (temperatura, precipitação, feriados) | <strong>Acurácia:</strong> Previsões 95,6% mais precisas que métodos tradicionais.
+        </div>
+    </div>
+</div>
+
+<div class="slide" id="slide3">
+    <div class="slide-content">
+        <span class="badge">Problema 2 · Ocupação de Leitos</span>
+        <h1>🛏️ Previsão de Ocupação de Leitos (UTI/Enfermaria)</h1>
+        <p><strong>Objetivo:</strong> Estimar a taxa de ocupação para os próximos dias, permitindo ações proativas antes da superlotação.</p>
+        
+        <div class="problem-card">
+            <h3>🎯 Variável Alvo</h3>
+            <p><strong>Taxa de ocupação diária</strong> (leitos ocupados / leitos totais) ou número absoluto de leitos ocupados</p>
+        </div>
+
+        <h3>📊 Variáveis da Base de Dados</h3>
+        <div class="variables-grid">
+            <div class="var-box"><strong>🔢 Endógenas</strong>Ocupação passada (dias anteriores), taxas de alta, tempo médio de permanência (LOS)</div>
+            <div class="var-box"><strong>🏥 Exógenas (Fluxo)</strong>Admissões do dia anterior, transferências de outras unidades, cirurgias agendadas</div>
+            <div class="var-box"><strong>👥 Exógenas (Perfil)</strong>Distribuição por gravidade, pacientes com alta prevista, leitos bloqueados</div>
+            <div class="var-box"><strong>📈 Exógenas (Sazonais)</strong>Sazonalidade semanal, surtos sazonais (inverno, gripe) [citation:8]</div>
+        </div>
+
+        <div class="reference">
+            <strong>📖 Referência detalhada:</strong><br>
+            Avinash, G., et al. (2025). <strong>"Bayesian model averaging based deep learning forecasts of inpatient bed occupancy in mental health facilities"</strong> <em>Scientific Reports</em>, 15:38294.<br>
+            🔗 <a href="https://pubmed.ncbi.nlm.nih.gov/41184292/" target="_blank">PMID: 41184292</a> | <strong>Modelos:</strong> BiLSTM + BMA (Bayesian Model Averaging) | <strong>Acurácia:</strong> MAPE de 1,94%, capturando flutuações semanais com precisão de ±13 leitos.
+        </div>
+    </div>
+</div>
+
+<div class="slide" id="slide4">
+    <div class="slide-content">
+        <span class="badge">Problema 3 · Demanda Ambulatorial</span>
+        <h1>🏥 Previsão de Demanda Ambulatorial</h1>
+        <p><strong>Objetivo:</strong> Antecipar o volume diário de atendimentos ambulatoriais para otimizar escalas de profissionais e reduzir filas.</p>
+        
+        <div class="problem-card">
+            <h3>🎯 Variável Alvo</h3>
+            <p><strong>Volume diário de atendimentos ambulatoriais</strong> (consultas, exames, procedimentos)</p>
+        </div>
+
+        <h3>📊 Variáveis da Base de Dados</h3>
+        <div class="variables-grid">
+            <div class="var-box"><strong>🔢 Endógenas</strong>Atendimentos passados (lag), dia da semana, mês, ano</div>
+            <div class="var-box"><strong>🌡️ Exógenas (Clima+Poluição)</strong>Temperatura, PM2.5, umidade, qualidade do ar [citation:9]</div>
+            <div class="var-box"><strong>👨‍⚕️ Exógenas (Recursos)</strong>Número de especialistas disponíveis, absenteísmo, horários de atendimento</div>
+            <div class="var-box"><strong>📅 Exógenas (Calendário)</strong>Feriados, campanhas de vacinação, datas de pagamento [citation:2]</div>
+        </div>
+
+        <div class="reference">
+            <strong>📖 Referência detalhada:</strong><br>
+            Li, Y., et al. (2025). <strong>"Predicting hospital outpatient volume using XGBoost: a machine learning approach"</strong> <em>Scientific Reports</em>, 15:12045.<br>
+            🔗 <a href="https://www.nature.com/articles/s41598-025-01265-y" target="_blank">Nature.com</a> | <strong>Modelos:</strong> XGBoost vs SARIMAX vs Random Forest | <strong>Principais features:</strong> Especialistas disponíveis, temperatura média, PM2.5, dia da semana, mês.
+        </div>
+    </div>
+</div>
+
+<div class="slide" id="slide5">
+    <div class="slide-content">
+        <span class="badge">Síntese · Métodos e Modelos</span>
+        <h1>🔧 Abordagens Metodológicas</h1>
+        
+        <h3>📈 Modelos Estatísticos Clássicos</h3>
+        <div class="variables-grid" style="margin-bottom: 1rem;">
+            <div class="var-box"><strong>ARIMA/SARIMA</strong>Modelos autorregressivos integrados de médias móveis, com componente sazonal. Eficazes para séries com padrões estáveis [citation:1].</div>
+            <div class="var-box"><strong>Suavização Exponencial</strong>Holt-Winters para séries com tendência e sazonalidade. Bom custo-benefício computacional [citation:5].</div>
+        </div>
+
+        <h3>🤖 Modelos de Machine Learning</h3>
+        <div class="variables-grid">
+            <div class="var-box"><strong>XGBoost</strong>Gradient boosting com regularização. Captura relações não-lineares e interações complexas [citation:9].</div>
+            <div class="var-box"><strong>LSTM / BiLSTM</strong>Redes neurais recorrentes ideais para dependências temporais de longo prazo [citation:8].</div>
+            <div class="var-box"><strong>Modelos Híbridos</strong>SARIMAX + XGBoost (paralelo/série) combina vantagens estatísticas e de ML [citation:2].</div>
+        </div>
+
+        <div class="reference" style="margin-top: 1rem;">
+            <strong>💡 Insight metodológico:</strong> Estudos recentes demonstram que modelos híbridos (SARIMAX + XGBoost) superam abordagens isoladas, especialmente ao incorporar variáveis exógenas como clima e feriados [citation:2][citation:9].
+        </div>
+    </div>
+</div>
+
+<div class="slide" id="slide6">
+    <div class="slide-content">
+        <span class="badge">Conclusão · Conexão com o Trabalho</span>
+        <h1>✅ Contribuições e Próximos Passos</h1>
+        
+        <div style="background: #eef2ff; padding: 1.5rem; border-radius: 1.5rem; margin: 1.5rem 0;">
+            <h3>📌 Três Problemas Apresentados</h3>
+            <ul style="margin-left: 1.5rem; line-height: 2;">
+                <li><strong>1. Previsão de Admissões Não-Eletivas</strong> — Suporte para dimensionamento de leitos emergenciais</li>
+                <li><strong>2. Previsão de Ocupação de Leitos (UTI)</strong> — Antecipação de risco de superlotação</li>
+                <li><strong>3. Previsão de Demanda Ambulatorial</strong> — Otimização de escalas e redução de filas</li>
+            </ul>
+        </div>
+
+        <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 1.5rem;">
+            <h3>🔗 Conexão com o Trabalho Original</h3>
+            <p>O trabalho "When Imperfection Outperforms Perfection" focou na <strong>alocação de leitos via ML+Otimização</strong>. A análise de séries temporais agrega:</p>
+            <ul style="margin-left: 1.5rem; margin-top: 0.8rem;">
+                <li><strong>Visão macro</strong> — tendências e sazonalidades da demanda</li>
+                <li><strong>Cenários realistas</strong> — baseados em padrões temporais observados</li>
+                <li><strong>Explicabilidade</strong> — o "Imperfection Advantage" é compreendido via ruído e variabilidade temporal</li>
+            </ul>
+        </div>
+
+        <div class="reference" style="margin-top: 1.5rem;">
+            <strong>📚 Referências Complementares:</strong><br>
+            • Shah, K., et al. (2021). Forecasting nonelective bed occupancy in the NHS. <em>JMIR Med Inform</em>. <a href="https://pubmed.ncbi.nlm.nih.gov/34591020/" target="_blank">PMID: 34591020</a><br>
+            • Bravo, F., et al. (2023). Interpretable prediction rules for congestion risk in ICUs. <em>Stochastic Systems</em>. <a href="https://anderson-review.ucla.edu/anticipating-overcrowding-risk-in-the-icu/" target="_blank">UCLA Anderson Review</a>
+        </div>
+        
+        <footer>Apresentação baseada em artigos científicos (2021-2025) · Tempo estimado: 10 minutos</footer>
+    </div>
+</div>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = 6;
+
+    function updateSlides() {
+        for (let i = 1; i <= totalSlides; i++) {
+            const slide = document.getElementById(`slide${i}`);
+            if (slide) {
+                slide.classList.remove('active');
+            }
+        }
+        const activeSlide = document.getElementById(`slide${currentSlide}`);
+        if (activeSlide) {
+            activeSlide.classList.add('active');
+        }
+        document.getElementById('pageIndicator').innerText = `${currentSlide} / ${totalSlides}`;
+    }
+
+    function changeSlide(direction) {
+        let newSlide = currentSlide + direction;
+        if (newSlide >= 1 && newSlide <= totalSlides) {
+            currentSlide = newSlide;
+            updateSlides();
+        }
+    }
+
+    // Teclado: setas esquerda/direita
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft') {
+            changeSlide(-1);
+        } else if (e.key === 'ArrowRight') {
+            changeSlide(1);
+        }
+    });
+</script>
+</body>
+</html>
